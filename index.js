@@ -3,8 +3,15 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
 const User = require('./models/users');
 const bodyParser = require('express');
+const passport = require('passport');
+const { Strategy: LocalStrategy } = require('passport-local');
+
+// const { router: authRouter, localStrategy, jwtStrategy } = require('./auth/index');
+
+// mongoose.Promise = global.Promise;
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose');
@@ -26,6 +33,11 @@ app.use(
   })
 );
 
+// app.use('/api/users/', usersRouter);
+// app.use('/api/auth/', authRouter);
+
+// const jwtAuth = passport.authenticate('jwt', { session: false });
+
 app.get ('/api/users', (req,res,next) => {
   const { searchTerm } = req.query;
   
@@ -35,7 +47,7 @@ app.get ('/api/users', (req,res,next) => {
     return User.find(searchGame).sort({username: 1})
     .then(results => {
       console.log(results);
-      return res.json(results);
+      return res.status(200).json(results);
     })
   } else if (!searchTerm) {
   return User.find().sort({username: 1})
@@ -48,6 +60,24 @@ app.get ('/api/users', (req,res,next) => {
     })
   };
 })
+
+app.get('/api/users/:id', (req,res,next) => {
+  const id = req.params.id;
+
+  return User.findById(id)
+  .then(result => {
+    if(result) {
+      res.json(result).status(200);
+    } else {
+      next();
+    }
+  })
+  .catch(err => {
+    next(err);
+  })
+})
+
+// REGISTER
 
 app.post('/api/users', (req,res,next) => {
   const username = req.body.username;
@@ -63,6 +93,15 @@ app.post('/api/users', (req,res,next) => {
       next(err);
     })
 })
+
+// LOGIN
+
+// const localAuth = passport.authenticate('local', { session: false });
+
+// app.post('/api/login', localAuth, function(req,res) {
+//   console.log(`${req.users.username} successfully logged in.`);
+//   return res.json({ data: 'rosebud' });
+// });
 
 function runServer(port = PORT) {
   const server = app
