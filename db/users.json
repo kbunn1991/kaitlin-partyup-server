@@ -1,0 +1,10 @@
+[
+
+  {"username": "user01", "password": "password01", "games": ["Overwatch", "Fallout 4"], "info": null, "ranking": "bronze"},
+
+  {"username": "user02", "password": "password02", "games": ["Bioshock", "Call of Duty"], "info": null, "ranking": "bronze"},
+
+  {"username": "user03", "password": "password03", "games": ["Destiny 2", "Dragon Age: Inquisition"], "info": null, "ranking": "bronze"}
+
+
+]
