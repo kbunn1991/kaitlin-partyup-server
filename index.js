@@ -5,15 +5,28 @@ const cors = require('cors');
 const morgan = require('morgan');
 const User = require('./models/users');
 const Group = require('./models/groups');
-const bodyParser = require('express');
+
+const passport = require('passport');
+const localStrategy = require('./passport/local');
+const authRouter = require('./routes/auth');
+const jwtStrategy = require('./passport/jwt');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose');
 // const {dbConnect} = require('./db-knex');
 
 const app = express();
-
 app.use(express.json());
+
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
+// MOUNT THE APP ROUTER
+app.use('/api', authRouter);
+
+// Protect endpoints using JWT Strategy
+// router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
+
 
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
@@ -27,18 +40,9 @@ app.use(
   })
 );
 
-app.get ('/api/groups', (req,res,next) => {
-  // const { searchTerm } = req.query;
-  
-  // const searchGroup = {games: {$in: searchTerm}};
+// GET GROUPS
 
-  // if (searchTerm) {
-  //   return User.find(searchGame).sort({username: 1})
-  //   .then(results => {
-  //     console.log(results);
-  //     return res.status(200).json(results);
-  //   })
-  // } else if (!searchTerm) {
+app.get ('/api/groups', (req,res,next) => {
   return Group.find()
     .then(results => {
       console.log(results);
@@ -47,7 +51,22 @@ app.get ('/api/groups', (req,res,next) => {
     .catch(err => {
       next(err);
     })
-  // };
+})
+
+// MAKE GROUP
+
+app.post('/api/groups', (req,res,next) => {
+  const groupName = req.body.groupName;
+  
+  const newGroup = { groupName };
+
+  Group.create(newGroup)
+    .then(result => {
+      res.location(`${req.originalUrl}`).status(201).json(result)
+    })
+    .catch(err => {
+      next(err);
+    })
 })
 
 // GET ALL USERS
@@ -97,15 +116,27 @@ app.post('/api/users', (req,res,next) => {
   const username = req.body.username;
   const password = req.body.password;
   
-  const newUser = { username, password };
-
-  User.create(newUser)
+  return User.hashPassword(password)
+    .then(digest => {
+      const newUser = {
+        username,
+        password: digest
+      };
+      return User.create(newUser);
+    })
     .then(result => {
-      res.location(`${req.originalUrl}`).status(201).json(result)
+      return res.status(201).location(`/api/users/${result.id}`).json(result);
     })
     .catch(err => {
-      next(err);
+      next(err)
     })
+  // User.create(newUser)
+  //   .then(result => {
+  //     res.location(`${req.originalUrl}`).status(201).json(result)
+  //   })
+  //   .catch(err => {
+  //     next(err);
+  //   })
 })
 
 // LOGIN
