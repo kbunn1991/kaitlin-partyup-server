@@ -3,15 +3,9 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const mongoose = require('mongoose');
 const User = require('./models/users');
+const Group = require('./models/groups');
 const bodyParser = require('express');
-const passport = require('passport');
-const { Strategy: LocalStrategy } = require('passport-local');
-
-// const { router: authRouter, localStrategy, jwtStrategy } = require('./auth/index');
-
-// mongoose.Promise = global.Promise;
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose');
@@ -33,10 +27,30 @@ app.use(
   })
 );
 
-// app.use('/api/users/', usersRouter);
-// app.use('/api/auth/', authRouter);
+app.get ('/api/groups', (req,res,next) => {
+  // const { searchTerm } = req.query;
+  
+  // const searchGroup = {games: {$in: searchTerm}};
 
-// const jwtAuth = passport.authenticate('jwt', { session: false });
+  // if (searchTerm) {
+  //   return User.find(searchGame).sort({username: 1})
+  //   .then(results => {
+  //     console.log(results);
+  //     return res.status(200).json(results);
+  //   })
+  // } else if (!searchTerm) {
+  return Group.find()
+    .then(results => {
+      console.log(results);
+      return res.json(results);
+    })
+    .catch(err => {
+      next(err);
+    })
+  // };
+})
+
+// GET ALL USERS
 
 app.get ('/api/users', (req,res,next) => {
   const { searchTerm } = req.query;
@@ -95,13 +109,6 @@ app.post('/api/users', (req,res,next) => {
 })
 
 // LOGIN
-
-// const localAuth = passport.authenticate('local', { session: false });
-
-// app.post('/api/login', localAuth, function(req,res) {
-//   console.log(`${req.users.username} successfully logged in.`);
-//   return res.json({ data: 'rosebud' });
-// });
 
 function runServer(port = PORT) {
   const server = app
