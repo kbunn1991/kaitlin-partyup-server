@@ -9,14 +9,14 @@ const userSchema = new mongoose.Schema({
   id: { type: mongoose.Schema.Types.ObjectId },
   games: { type: Array, required: false },
   inMyGroup: { type: Boolean, default: false },
-  groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+  // groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }]
 })
 
 userSchema.set('toObject', {
   virtuals: true, // include built-in virtual `id`
   versionKey: false, // remove _v
   transform: (doc,ret) => {
-    delete ret._id; // delete `_id`
+    // delete ret._id; // delete `_id`
     delete ret.password;
   }
 })

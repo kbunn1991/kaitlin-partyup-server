@@ -3,13 +3,16 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const User = require('./models/users');
 const Group = require('./models/groups');
 
 const passport = require('passport');
 const localStrategy = require('./passport/local');
-const authRouter = require('./routes/auth');
 const jwtStrategy = require('./passport/jwt');
+
+const userRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
+const groupRouter = require('./routes/groups');
+
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose');
@@ -20,9 +23,6 @@ app.use(express.json());
 
 passport.use(localStrategy);
 passport.use(jwtStrategy);
-
-// MOUNT THE APP ROUTER
-app.use('/api', authRouter);
 
 // Protect endpoints using JWT Strategy
 // router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
@@ -40,107 +40,6 @@ app.use(
   })
 );
 
-// GET GROUPS
-
-app.get ('/api/groups', (req,res,next) => {
-  return Group.find()
-    .then(results => {
-      console.log(results);
-      return res.json(results);
-    })
-    .catch(err => {
-      next(err);
-    })
-})
-
-// MAKE GROUP
-
-app.post('/api/groups', (req,res,next) => {
-  const groupName = req.body.groupName;
-  
-  const newGroup = { groupName };
-
-  Group.create(newGroup)
-    .then(result => {
-      res.location(`${req.originalUrl}`).status(201).json(result)
-    })
-    .catch(err => {
-      next(err);
-    })
-})
-
-// GET ALL USERS
-
-app.get ('/api/users', (req,res,next) => {
-  const { searchTerm } = req.query;
-  
-  const searchGame = {games: {$in: searchTerm}};
-
-  if (searchTerm) {
-    return User.find(searchGame).sort({username: 1})
-    .then(results => {
-      console.log(results);
-      return res.status(200).json(results);
-    })
-  } else if (!searchTerm) {
-  return User.find().sort({username: 1})
-    .then(results => {
-      console.log(results);
-      return res.json(results);
-    })
-    .catch(err => {
-      next(err);
-    })
-  };
-})
-
-app.get('/api/users/:id', (req,res,next) => {
-  const id = req.params.id;
-
-  return User.findById(id)
-  .then(result => {
-    if(result) {
-      res.json(result).status(200);
-    } else {
-      next();
-    }
-  })
-  .catch(err => {
-    next(err);
-  })
-})
-
-// REGISTER
-
-app.post('/api/users', (req,res,next) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  
-  return User.hashPassword(password)
-    .then(digest => {
-      const newUser = {
-        username,
-        password: digest
-      };
-      return User.create(newUser);
-    })
-    .then(result => {
-      return res.status(201).location(`/api/users/${result.id}`).json(result);
-    })
-    .catch(err => {
-      next(err)
-    })
-  // User.create(newUser)
-  //   .then(result => {
-  //     res.location(`${req.originalUrl}`).status(201).json(result)
-  //   })
-  //   .catch(err => {
-  //     next(err);
-  //   })
-})
-
-// LOGIN
-
 function runServer(port = PORT) {
   const server = app
     .listen(port, () => {
@@ -151,6 +50,11 @@ function runServer(port = PORT) {
       console.error(err);
     });
 }
+
+// MOUNT THE ROUTERS
+app.use('/api', authRouter);
+app.use('/api/users', userRouter);
+app.use('/api/groups', passport.authenticate('jwt', { session: false, failWithError: true }), groupRouter);
 
 if (require.main === module) {
   dbConnect();
