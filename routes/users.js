@@ -24,7 +24,7 @@ userRouter.post('/', (req,res,next) => {
     })
 })
 
-// GET ALL USERS 
+// GET ALL USERS  - ON SEARCH USERS PAGE, SEARCH TERM FUNCTIONAL
 
 userRouter.get ('/', (req,res,next) => {
   const { searchTerm } = req.query;
@@ -49,7 +49,7 @@ userRouter.get ('/', (req,res,next) => {
   };
 })
 
-// GET USER BY ID
+// GET USER BY ID - FOR INDIVIDUAL PROFILES
 
 userRouter.get('/:id', (req,res,next) => {
   const id = req.params.id;
@@ -67,7 +67,7 @@ userRouter.get('/:id', (req,res,next) => {
   })
 })
 
-// EDIT USER 
+// EDIT USER - FOR EDIT PROFILE PAGE
 
 userRouter.put('/:id', (req,res,next) => {
   const { id } =  req.params;

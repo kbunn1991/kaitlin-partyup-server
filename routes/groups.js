@@ -3,7 +3,7 @@ const Group = require('../models/groups');
 const User = require('../models/users');
 const groupRouter = express.Router();
 
-// GET **YOUR** GROUPS
+// GET **YOUR** GROUPS - ON MY GROUPS PAGE
 
 groupRouter.get ('/mine', (req,res,next) => {
   const userId = req.user._id;
@@ -17,7 +17,7 @@ groupRouter.get ('/mine', (req,res,next) => {
     })
 });
 
-// GET GROUPS
+// GET GROUPS - ON SEARCH GROUPS PAGE, SEARCH TERM FUNCTIONAL
 
 groupRouter.get ('/', (req,res,next) => {
   const { searchTerm } = req.query;
@@ -40,7 +40,7 @@ groupRouter.get ('/', (req,res,next) => {
   }
 })
 
-// MAKE GROUP
+// MAKE GROUP - ON MY GROUPS PAGE, MAKE YOUR OWN GROUP
 
 groupRouter.post('/', (req,res,next) => {
   const groupName = req.body.groupName;
@@ -56,7 +56,7 @@ groupRouter.post('/', (req,res,next) => {
     })
 })
 
-// GET GROUP BY ID
+// GET GROUP BY ID  - VIEW A GROUP, FOR INDIVIDUAL GROUP PROFILE PAGE
 
 groupRouter.get('/:id', (req,res,next) => {
   const id = req.params.id;
@@ -74,7 +74,22 @@ groupRouter.get('/:id', (req,res,next) => {
   })
 })
 
-// JOIN A GROUP
+groupRouter.put('/:id', (req,res,next) => {
+  const id = req.params.id;
+  const userId = req.user._id;
+  const { groupName } = req.body;
+  const updateItem = { groupName: groupName } 
+
+  return Group.findByIdAndUpdate(id, updateItem, {new: true})
+      .then(results => {
+        res.json(results)
+      })
+      .catch(err => {
+        next(err);
+    })
+})
+
+// JOIN A GROUP - ON GROUP PAGE AND LIST OF GROUPS
 
 groupRouter.put('/:id/join', (req,res,next) => {
   const id = req.params.id;
@@ -92,7 +107,7 @@ groupRouter.put('/:id/join', (req,res,next) => {
     // }
 })
 
-// LEAVE A GROUP
+// LEAVE A GROUP - ON GROUP PAGE AND LIST OF GROUPS
 
 groupRouter.put('/:id/leave', (req,res,next) => {
   const id = req.params.id;
@@ -106,6 +121,8 @@ groupRouter.put('/:id/leave', (req,res,next) => {
         next(err);
       })
 })
+
+// DELETE A GROUP - ON MY GROUPS PAGE (MY CREATED)
 
 groupRouter.delete('/:id', (req,res,next) => {
   const { id } = req.params;

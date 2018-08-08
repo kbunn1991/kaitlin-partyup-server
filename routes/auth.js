@@ -18,6 +18,8 @@ function createAuthToken (user) {
   });
 }
 
+// LOGIN - LOGIN PAGE, SPITS A JWT BACK OUT
+
 authRouter.post('/login', localAuth, function (req, res) {
   const authToken = createAuthToken(req.user);
   res.json({ authToken });
