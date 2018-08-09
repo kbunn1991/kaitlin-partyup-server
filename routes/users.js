@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/users')
 const userRouter = express.Router();
+const passport = require('passport');
 
 // REGISTER A NEW USER
 
@@ -26,10 +27,10 @@ userRouter.post('/', (req,res,next) => {
 
 // GET ALL USERS  - ON SEARCH USERS PAGE, SEARCH TERM FUNCTIONAL
 
-userRouter.get ('/', (req,res,next) => {
+userRouter.get ('/', passport.authenticate('jwt', { session: false, failWithError: true }), (req,res,next) => {
   const { searchTerm } = req.query;
   
-  const searchGame = {games: {$in: searchTerm}};
+  const searchGame = {games: {"$regex": searchTerm}};
 
   if (searchTerm) {
     return User.find(searchGame).sort({username: 1})
@@ -51,7 +52,7 @@ userRouter.get ('/', (req,res,next) => {
 
 // GET USER BY ID - FOR INDIVIDUAL PROFILES
 
-userRouter.get('/:id', (req,res,next) => {
+userRouter.get('/:id',  passport.authenticate('jwt', { session: false, failWithError: true }), (req,res,next) => {
   const id = req.params.id;
 
   return User.findById(id)
@@ -69,12 +70,13 @@ userRouter.get('/:id', (req,res,next) => {
 
 // EDIT USER - FOR EDIT PROFILE PAGE
 
-userRouter.put('/:id', (req,res,next) => {
+userRouter.put('/:id',  passport.authenticate('jwt', { session: false, failWithError: true }), (req,res,next) => {
   const { id } =  req.params;
   // const userId = req.user._id;
-  const { username, games = [], info } = req.body;
+  const { profileImage, games = [], tags = [] } = req.body;
 
-  const updateUser = { username, games, info };
+  const updateUser = { profileImage, games, tags };
+  console.log(updateUser); 
 
   User.findOneAndUpdate({_id: id}, updateUser, {new: true})
     .then(result => {

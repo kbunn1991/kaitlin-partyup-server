@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
   id: { type: mongoose.Schema.Types.ObjectId },
   games: { type: Array, required: false },
   inMyGroup: { type: Boolean, default: false },
+  tags: { type: Array, required: false }, 
+  profileImage: { type: String, required: false }
   // groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }]
 })
 
