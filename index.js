@@ -54,7 +54,6 @@ function runServer(port = PORT) {
 // MOUNT THE ROUTERS
 app.use('/api', authRouter);
 app.use('/api/users', userRouter);
-// app.use('/api/groups', groupRouter);
 app.use('/api/groups', passport.authenticate('jwt', { session: false, failWithError: true }), groupRouter);
 
 if (require.main === module) {

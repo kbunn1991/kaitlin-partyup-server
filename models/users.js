@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema({
   games: { type: Array, required: false },
   inMyGroup: { type: Boolean, default: false },
   tags: { type: Array, required: false }, 
-  profileImage: { type: String, required: false }
+  profileImage: { type: String, required: false },
+  info: { type: String, required: false }
   // groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }]
 })
 

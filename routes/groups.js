@@ -17,6 +17,17 @@ groupRouter.get ('/mine', (req,res,next) => {
     })
 });
 
+// GET YOUR **CREATED** GROUPS - ON MY GROUPS PAGE
+
+groupRouter.get ('/created', (req,res,next) => {
+  const currentUser = req.user._id;
+  return Group.find({userId: {$in: currentUser}})
+    .then(results => {
+      console.log(results);
+      return res.status(200).json(results);
+    })
+})
+
 // GET GROUPS - ON SEARCH GROUPS PAGE, SEARCH TERM FUNCTIONAL
 
 groupRouter.get ('/', (req,res,next) => {
@@ -43,12 +54,13 @@ groupRouter.get ('/', (req,res,next) => {
 // MAKE GROUP - ON MY GROUPS PAGE, MAKE YOUR OWN GROUP
 
 groupRouter.post('/', (req,res,next) => {
-  const groupName = req.body.groupName;
+  const { groupName, game, userId, groupType } = req.body;
   
-  const newGroup = { groupName };
+  const newGroup = { groupName, game, userId, groupType };
 
   Group.create(newGroup)
     .then(result => {
+      console.log(result);
       res.location(`${req.originalUrl}`).status(201).json(result)
     })
     .catch(err => {
@@ -94,12 +106,17 @@ groupRouter.put('/:id', (req,res,next) => {
 groupRouter.put('/:id/join', (req,res,next) => {
   const id = req.params.id;
   const userId = req.user._id;
-  console.log(req.user);
+  // console.log(req.user);
   const updateItem = { $addToSet: {users: req.user._id} };
+  console.log(req.body);
 
     return Group.findByIdAndUpdate(id, updateItem, {new: true})
       .then(results => {
-        res.json(results)
+        if (results) {
+          res.json(results)
+        } else {
+          next();
+        }
       })
       .catch(err => {
         next(err);
