@@ -31,9 +31,16 @@ groupRouter.get ('/created', (req,res,next) => {
 // GET GROUPS - ON SEARCH GROUPS PAGE, SEARCH TERM FUNCTIONAL
 
 groupRouter.get ('/', (req,res,next) => {
-  const { searchTerm } = req.query;
+  const { searchTerm, tags } = req.query;
 
-  if (searchTerm) {
+
+  if (searchTerm && tags) {
+    return Group.find({groupName: {"$regex": searchTerm}}).where({tags: {$in: tags}})
+    .then(results => {
+      console.log(results);
+      return res.status(200).json(results);
+    })
+  } else if (searchTerm) {
     return Group.find({groupName: {"$regex": searchTerm}}).sort({groupName: 1})
     .then(results => {
       console.log(results);
@@ -54,9 +61,9 @@ groupRouter.get ('/', (req,res,next) => {
 // MAKE GROUP - ON MY GROUPS PAGE, MAKE YOUR OWN GROUP
 
 groupRouter.post('/', (req,res,next) => {
-  const { groupName, game, userId, groupType } = req.body;
+  const { groupName, game, userId, groupType, tags } = req.body;
   
-  const newGroup = { groupName, game, userId, groupType };
+  const newGroup = { groupName, game, userId, groupType, tags };
 
   Group.create(newGroup)
     .then(result => {
