@@ -87,7 +87,7 @@ userRouter.put('/:id',  passport.authenticate('jwt', { session: false, failWithE
       if (games.length > 0 && games[0] !== '') {
         user.games.push(...games)
       };
-      if (tags !== []) {
+      if (tags.length > 0 && tags[0] !== '') {
         user.tags.push(...tags)
       };
       user.save( (err, savedUser) => {
