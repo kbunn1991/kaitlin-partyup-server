@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema({
   tags: { type: Array, required: false }, 
   profileImage: { type: String, required: false },
   info: { type: String, required: false }
-  // groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }]
 })
 
 userSchema.set('toObject', {

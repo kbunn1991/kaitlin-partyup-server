@@ -31,10 +31,16 @@ groupRouter.get ('/created', (req,res,next) => {
 // GET GROUPS - ON SEARCH GROUPS PAGE, SEARCH TERM FUNCTIONAL
 
 groupRouter.get ('/', (req,res,next) => {
-  const { searchTerm, tags } = req.query;
+  const { searchTerm, game, tags } = req.query;
 
 
-  if (searchTerm && tags) {
+  if (searchTerm && game && tags) {
+    return Group.find({groupName: {"$regex": searchTerm}}).where({game: {$in: game}}).where({tags: {$in: tags}})
+    .then(results => {
+      console.log(results);
+      return res.status(200).json(results);
+    })
+  } else if (searchTerm && tags) {
     return Group.find({groupName: {"$regex": searchTerm}}).where({tags: {$in: tags}})
     .then(results => {
       console.log(results);
