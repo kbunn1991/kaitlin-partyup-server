@@ -100,7 +100,7 @@ userRouter.put('/:id',  passport.authenticate('jwt', { session: false, failWithE
   })
 
 
-  // LEAVE A GROUP - ON GROUP PAGE AND LIST OF GROUPS
+  // DELETE A GAME
 
   // delete -> users/:id/game/gameId
 
@@ -115,8 +115,24 @@ userRouter.put('/:id',  passport.authenticate('jwt', { session: false, failWithE
         })
         .catch(err => {
           next(err);
-        })
       })
+  })
+
+  // DELETE A TAG
+
+  userRouter.put('/:id/deleteTag', passport.authenticate('jwt', { session: false, failWithError: true }), (req,res,next) => {
+    const { id } =  req.params;
+    const tagId = req.body.tagId;
+    const deleteTag = { $pull: {tags: tagId} };
+    console.log(`TagId is ${tagId}`);
+    return User.findByIdAndUpdate(id, deleteTag, {new: true})
+        .then(results => {
+          res.json(results)
+        })
+        .catch(err => {
+          next(err);
+      })
+  })
 
   // delete should use delete route
   
