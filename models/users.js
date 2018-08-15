@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   games: { type: Array, required: false },
   inMyGroup: { type: Boolean, default: false },
   tags: { type: Array, required: false }, 
-  profileImage: { type: String, required: false },
+  profileImage: { type: String, required: false, deault: 'http://placehold.it/200x200' },
   info: { type: String, required: false }
 })
 
