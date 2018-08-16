@@ -52,6 +52,18 @@ groupRouter.get ('/', (req,res,next) => {
       console.log(results);
       return res.status(200).json(results);
     })
+  } else if (game) {
+    return Group.find({game: {$in: game}}).sort({groupName: 1})
+    .then(results => {
+      console.log(results);
+      return res.status(200).json(results);
+    })
+  } else if (tags) {
+    return Group.find({tags: {$in: tags}}).sort({groupName: 1})
+    .then(results => {
+      console.log(results);
+      return res.status(200).json(results);
+    })
   } else if (!searchTerm) {
   return Group.find()
     .then(results => {

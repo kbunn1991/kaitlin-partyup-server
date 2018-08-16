@@ -73,7 +73,7 @@ userRouter.get('/:id',  passport.authenticate('jwt', { session: false, failWithE
 userRouter.put('/:id',  passport.authenticate('jwt', { session: false, failWithError: true }), (req,res,next) => {
   const { id } =  req.params;
   // const userId = req.user._id;
-  const { profileImage, games = [], tags = [] } = req.body;
+  const { profileImage, bio, games = [], tags = [] } = req.body;
 
   // const updateUser = { profileImage, games, tags };
   // console.log(updateUser); 
@@ -83,6 +83,9 @@ userRouter.put('/:id',  passport.authenticate('jwt', { session: false, failWithE
       console.log(games);
       if (profileImage) {
         user.profileImage = profileImage
+      };
+      if (bio) {
+        user.bio = bio
       };
       if (games.length > 0 && games[0] !== '') {
         user.games.push(...games)
