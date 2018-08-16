@@ -11,7 +11,8 @@ const userSchema = new mongoose.Schema({
   inMyGroup: { type: Boolean, default: false },
   tags: { type: Array, required: false }, 
   profileImage: { type: String, required: false, deault: 'http://placehold.it/200x200' },
-  bio: { type: String, required: false }
+  bio: { type: String, required: false },
+  endorsement: { type: Number, default: 0 }
 })
 
 userSchema.set('toObject', {

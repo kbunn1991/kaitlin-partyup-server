@@ -65,7 +65,7 @@ groupRouter.get ('/', (req,res,next) => {
       return res.status(200).json(results);
     })
   } else if (!searchTerm) {
-  return Group.find()
+  Group.find()
     .then(results => {
       console.log(results);
       return res.json(results);
@@ -98,7 +98,7 @@ groupRouter.post('/', (req,res,next) => {
 groupRouter.get('/:id', (req,res,next) => {
   const id = req.params.id;
 
-  return Group.findById(id)
+  return Group.findById(id).populate('users')
   .then(result => {
     if(result) {
       res.json(result).status(200);

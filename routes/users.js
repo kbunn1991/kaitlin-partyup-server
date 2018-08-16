@@ -68,6 +68,24 @@ userRouter.get('/:id',  passport.authenticate('jwt', { session: false, failWithE
   })
 })
 
+// ENDORSE A USER 
+
+userRouter.put(':/id/endorse', (req,res,next) => {
+  const { id } = req.params.id 
+  User.findById(id)
+    .then(user => {
+      if (id) {
+        user.endorse = user.endorse.count + 1;
+      };
+      user.save( (err, savedUser) => {
+        if (err) { next (err); }
+        else { res.json(savedUser) }
+      }) 
+    }).catch(err => {
+      next(err);
+  })
+})
+
 // EDIT USER - FOR EDIT PROFILE PAGE
 
 userRouter.put('/:id',  passport.authenticate('jwt', { session: false, failWithError: true }), (req,res,next) => {
