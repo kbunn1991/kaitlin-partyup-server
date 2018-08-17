@@ -8,7 +8,7 @@ module.exports = {
   TEST_DATABASE_URL:
         process.env.TEST_DATABASE_URL ||
         'mongodb://kbunn1991:kaitlin1@ds113942.mlab.com:13942/party-up-test',
-  JWT_SECRET: process.env.JWT_SECRET || 'SOMETHING',
+  JWT_SECRET: process.env.JWT_SECRET || 'NERF_THIS',
   JWT_EXPIRY: process.env.JWT_EXPIRY || '7d'
   // DATABASE_URL:
   //     process.env.DATABASE_URL || 'postgres://localhost/thinkful-backend',

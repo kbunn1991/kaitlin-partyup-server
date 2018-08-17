@@ -36,7 +36,7 @@ app.use(
 
 app.use(
   cors({
-    origin: 'https://partyup-client.herokuapp.com/'
+    origin: CLIENT_ORIGIN
   })
 );
 
