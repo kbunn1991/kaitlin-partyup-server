@@ -70,13 +70,12 @@ userRouter.get('/:id',  passport.authenticate('jwt', { session: false, failWithE
 
 // ENDORSE A USER 
 
-userRouter.put(':/id/endorse', (req,res,next) => {
-  const { id } = req.params.id 
+userRouter.put('/:id/endorse', (req,res,next) => {
+  const id = req.params.id;
+  console.log(id);
   User.findById(id)
     .then(user => {
-      if (id) {
-        user.endorse = user.endorse.count + 1;
-      };
+      user.endorsement = user.endorsement + 1;
       user.save( (err, savedUser) => {
         if (err) { next (err); }
         else { res.json(savedUser) }

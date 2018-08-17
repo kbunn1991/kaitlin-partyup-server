@@ -50,8 +50,8 @@ describe('GET /api/users', function () {
   it ('should return the list of users', function () {
     return Promise.all([
       User.find()
-      .then(([data, res]) => {
-        expect(res).to.be.json;
+      .then((res) => {
+        
       })
     ])
   })
